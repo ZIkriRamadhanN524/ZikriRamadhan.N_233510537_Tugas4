@@ -1,0 +1,19 @@
+{
+  "articles": [
+    {
+      "id": "3",
+      "title": "Keahlian",
+      "content": "Aku Jago Bermain Delta Force dan Jago Ngoding Kemudian Saya sangat suka belajar"
+    },
+    {
+      "id": null,
+      "title": "My Friends",
+      "content": "Ahmad Zaki, Adra Herlyan, Roby ihzan Permana, Faiz Firzatullah Oktavian, Wahyu Kurnia Pratama, Shandi Reskiawan, Raditya Rahim, Nopriansyah, Muklis Barus"
+    },
+    {
+      "id": null,
+      "title": "Delta Force",
+      "content": "Pangkat Saya Marshal Bintang 100"
+    }
+  ]
+}
