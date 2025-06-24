@@ -1,9 +1,24 @@
 <template>
   <div class="container">
+    <p v-if="message" class="success">{{ message }}</p>
+
     <form @submit.prevent="save" class="form">
-      <input type="text" v-model="form.title" placeholder="Judul Artikel" /><br />
-      <textarea v-model="form.content" placeholder="Isi Artikel"></textarea><br />
-      <button type="submit">Save</button>
+      <input 
+        type="text" 
+        v-model.trim="form.title" 
+        placeholder="Masukkan judul artikel..." 
+        required
+      /><br />
+      
+      <textarea 
+        v-model.trim="form.content" 
+        placeholder="Masukkan isi artikel..." 
+        required
+      ></textarea><br />
+      
+      <button type="submit">
+        {{ form.id ? 'Update Artikel' : 'Tambah Artikel' }}
+      </button>
     </form>
 
     <ul class="article-list">
@@ -32,7 +47,9 @@ const form = reactive({
 })
 
 const articles = ref([])
+const message = ref('')
 
+// Load data dari server
 async function load() {
   try {
     const response = await axios.get('http://localhost:3000/articles')
@@ -42,31 +59,47 @@ async function load() {
   }
 }
 
+// Simpan atau perbarui data
 async function save() {
+  if (!form.title.trim() || !form.content.trim()) {
+    alert('Judul dan konten tidak boleh kosong!')
+    return
+  }
+
   try {
     if (form.id) {
       await axios.put(`http://localhost:3000/articles/${form.id}`, form)
       const index = articles.value.findIndex(a => a.id === form.id)
       articles.value[index] = { ...form }
+      message.value = 'Artikel berhasil diperbarui!'
     } else {
-      const response = await axios.post('http://localhost:3000/articles', form)
+      const response = await axios.post('http://localhost:3000/articles', {
+        title: form.title,
+        content: form.content
+      })
       articles.value.push(response.data)
+      message.value = 'Artikel berhasil ditambahkan!'
     }
 
+    // Reset form
     form.id = null
     form.title = ''
     form.content = ''
+    setTimeout(() => message.value = '', 3000)
+
   } catch (error) {
     console.error('Gagal menyimpan:', error)
   }
 }
 
+// Edit isi form
 function edit(article) {
   form.id = article.id
   form.title = article.title
   form.content = article.content
 }
 
+// Hapus data
 async function remove(id) {
   try {
     await axios.delete(`http://localhost:3000/articles/${id}`)
@@ -87,6 +120,16 @@ onMounted(load)
   background: #f7f9fa;
   border-radius: 8px;
   box-shadow: 0 0 10px #ccc;
+}
+
+.success {
+  background-color: #d4edda;
+  color: #155724;
+  border: 1px solid #c3e6cb;
+  padding: 10px;
+  border-radius: 4px;
+  margin-bottom: 15px;
+  text-align: center;
 }
 
 .form input,
